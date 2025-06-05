@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { useState } from "react";
 import { useRef } from "react";
+import { SubcategoryMenu } from "./subcategory-menu";
 import { useDropdownPosition } from "./use-dropdown-position";
 
 interface Props {
@@ -31,6 +32,7 @@ export const CategoryDropdown = ({
     setIsOpen(false);
   };
 
+  const dropdownPosition = getDropdownPosition();
   return (
     <div
       className="relative"
@@ -55,6 +57,12 @@ export const CategoryDropdown = ({
           )}
         ></div>
       )}
+
+      <SubcategoryMenu
+        category={category}
+        isOpen={isOpen}
+        position={dropdownPosition}
+      />
     </div>
   );
 };
