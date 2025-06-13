@@ -26,4 +26,6 @@ export const useDropdownPosition = (ref: RefObject<HTMLDivElement | null> | RefO
 
         return { top, left };
     };
+
+    return { getDropdownPosition };
 }

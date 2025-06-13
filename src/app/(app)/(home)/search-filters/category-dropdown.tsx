@@ -34,8 +34,8 @@ export const CategoryDropdown = ({
 
   const dropdownPosition = getDropdownPosition();
   return (
-    <div
-      className="relative"
+    <div //Wrapper around button component
+      className="relative" // Made the position relative to allow absolute positioning of the dropdown arrow
       ref={dropdownRef}
       onMouseEnter={onMouseEnter}
       onMouseLeave={onMouseLeave}
@@ -50,7 +50,7 @@ export const CategoryDropdown = ({
         {category.name}
       </Button>
       {category.subcategories && category.subcategories.length > 0 && (
-        <div
+        <div // Dropdown arrow
           className={cn(
             "opacity-0 absolute -bottom-3 w-0 h-0 border-l-[10px] border-r-[10px] border-b-[10px] border-l-transparent border-r-transparent border-b-black left-1/2 -translate-x-1/2",
             isOpen && "opacity-100"
@@ -58,7 +58,7 @@ export const CategoryDropdown = ({
         ></div>
       )}
 
-      <SubcategoryMenu
+      <SubcategoryMenu // Renders the SubcategoryMenu component
         category={category}
         isOpen={isOpen}
         position={dropdownPosition}

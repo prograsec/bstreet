@@ -58,8 +58,8 @@ async function Layout({ children }: Props) {
     <div className="flex flex-col min-h-screen">
       <Navbar />
       <SearchFilters data={formattedData} />
-      <div className="flex-1 bg-[#f4f4f0]">{children}</div>
-      <Footer />
+      {/* Main content area */}
+      <div className="flex-1 bg-[#f4f4f0]">{children}</div> <Footer />
     </div>
   );
 }
