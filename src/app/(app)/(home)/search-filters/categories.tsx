@@ -6,6 +6,7 @@ import { cn } from "@/lib/utils";
 import { ListFilterIcon } from "lucide-react";
 import { useState, useEffect, useRef } from "react";
 import { Button } from "@/components/ui/button";
+import { CategoriesSidebar } from "./categories-sidebar";
 
 interface CategoriesProps {
   data: CustomCategory[];
@@ -82,6 +83,13 @@ export const Categories = ({ data }: CategoriesProps) => {
     <div className="relative w-full">
       {/* Wrapper around the categories. This is what categories component is exporting */}
 
+      <CategoriesSidebar
+        open={isSidebarOpen}
+        onOpenChange={setIsSidebarOpen}
+        data={data}
+      />
+      {/* It takes two props: open and onOpenChange. open is a boolean that determines if the sidebar is open or not, and onOpenChange is a function that will be called when the sidebar is opened or closed */}
+
       {/* Hidden Div to measure all the items */}
       <div
         ref={measureRef} // Reference to the measure div
@@ -133,6 +141,7 @@ export const Categories = ({ data }: CategoriesProps) => {
                 !isAnyHovered &&
                 "bg-white border-primary"
             )}
+            onClick={() => setIsSidebarOpen(true)} // Toggles the sidebar open state when the button is clicked
           >
             View All <ListFilterIcon className="ml-2" />
           </Button>
