@@ -9,14 +9,19 @@ import {
 import { CustomCategory } from "../types";
 import { ChevronLeftIcon, ChevronRightIcon } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { useTRPC } from "@/trpc/client";
+import { useQuery } from "@tanstack/react-query";
 
 interface Props {
   open: boolean;
   onOpenChange: (open: boolean) => void; //This means the parent component is closing the sheet. Void means we don't care about the value of open.
-  data: CustomCategory[];
+  // data: CustomCategory[];
 }
 
-export const CategoriesSidebar = ({ open, onOpenChange, data }: Props) => {
+export const CategoriesSidebar = ({ open, onOpenChange }: Props) => {
+  const trpc = useTRPC();
+  const { data } = useQuery(trpc.categories.getMany.queryOptions()); //categories is the name of the router and getMany is the name of the function that will be called from the client
+
   console.log(data);
   const router = useRouter();
 

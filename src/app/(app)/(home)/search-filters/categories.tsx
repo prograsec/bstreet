@@ -86,7 +86,7 @@ export const Categories = ({ data }: CategoriesProps) => {
       <CategoriesSidebar
         open={isSidebarOpen}
         onOpenChange={setIsSidebarOpen}
-        data={data}
+        // data={data}
       />
       {/* It takes two props: open and onOpenChange. open is a boolean that determines if the sidebar is open or not, and onOpenChange is a function that will be called when the sidebar is opened or closed */}
 

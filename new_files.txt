@@ -1,0 +1,31 @@
+Files added since last commit:
+
+1. src/modules/categories/server/procedures.ts
+   - Purpose: Contains backend logic for handling category-related operations
+   - Explanation: This is where you define functions that handle database operations for categories 
+   (like creating, reading, updating categories). Think of it as the "worker" that does the actual data handling.
+
+2. src/trpc/client.tsx
+   - Purpose: Creates the frontend connection to your backend API
+   - Explanation: This sets up a "phone line" between your React components and your backend server. 
+   It allows your frontend to call backend functions directly.
+
+3. src/trpc/init.ts
+   - Purpose: Initializes the tRPC setup
+   - Explanation: This is like the "control center" that configures how your frontend and backend 
+   communicate with each other.
+
+4. src/trpc/query-client.ts
+   - Purpose: Manages data fetching and caching
+   - Explanation: This helps your app remember data it's already fetched, so it doesn't have to ask the 
+   server again and again (like a smart notebook that remembers answers).
+
+5. src/trpc/routers/_app.ts
+   - Purpose: Combines all your API routes
+   - Explanation: This is like a "directory" that lists all the different functions your backend can perform. 
+   It organizes all your API endpoints in one place.
+
+6. src/trpc/server.ts
+   - Purpose: Creates the backend API server
+   - Explanation: This is the "receptionist" of your backend - it receives requests from the frontend and routes 
+   them to the correct functions. 
