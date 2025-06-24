@@ -2,6 +2,7 @@
 // ^-- This directive tells Next.js that this component runs on the client side only
 //     This is required because we're using React hooks and browser-specific APIs
 
+import superjson from "superjson";
 // Import QueryClient type for TypeScript typing
 import type { QueryClient } from "@tanstack/react-query";
 // Import QueryClientProvider to wrap our app with React Query functionality
@@ -75,7 +76,7 @@ export function TRPCReactProvider(
       links: [
         // Use HTTP batch link to group multiple requests into single HTTP calls for better performance
         httpBatchLink({
-          // transformer: superjson, <-- Uncomment if you use a data transformer for Date, BigInt, etc.
+          transformer: superjson, // Uncomment if you use a data transformer for Date, BigInt, etc.
           url: getUrl(), // Use our URL function to get the correct API endpoint
         }),
       ],
