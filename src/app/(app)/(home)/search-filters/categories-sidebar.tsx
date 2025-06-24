@@ -6,26 +6,31 @@ import {
   SheetHeader,
   SheetTitle,
 } from "@/components/ui/sheet";
-import { CustomCategory } from "../types";
 import { ChevronLeftIcon, ChevronRightIcon } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { useTRPC } from "@/trpc/client";
+import { useQuery } from "@tanstack/react-query";
+import { CategoriesGetManyOutput } from "@/modules/categories/types";
 
 interface Props {
   open: boolean;
   onOpenChange: (open: boolean) => void; //This means the parent component is closing the sheet. Void means we don't care about the value of open.
-  data: CustomCategory[];
+  // data: CustomCategory[];
 }
 
-export const CategoriesSidebar = ({ open, onOpenChange, data }: Props) => {
+export const CategoriesSidebar = ({ open, onOpenChange }: Props) => {
+  const trpc = useTRPC();
+  const { data } = useQuery(trpc.categories.getMany.queryOptions()); //categories is the name of the router and getMany is the name of the function that will be called from the client
+
   console.log(data);
   const router = useRouter();
 
-  const [parentCategories, setParentCategories] = useState<
-    CustomCategory[] | null
-  >(null);
+  const [parentCategories, setParentCategories] =
+    useState<CategoriesGetManyOutput | null>(null);
 
-  const [selectedCategory, setSelectedCategory] =
-    useState<CustomCategory | null>(null);
+  const [selectedCategory, setSelectedCategory] = useState<
+    CategoriesGetManyOutput[1] | null
+  >(null);
 
   //If we have parent categories, show those, otherwise show root categories
   const currentCategories = parentCategories ?? data ?? [];
@@ -36,9 +41,9 @@ export const CategoriesSidebar = ({ open, onOpenChange, data }: Props) => {
     onOpenChange(open);
   };
 
-  const handleCategoryClick = (category: CustomCategory) => {
+  const handleCategoryClick = (category: CategoriesGetManyOutput[1]) => {
     if (category.subcategories && category.subcategories.length > 0) {
-      setParentCategories(category.subcategories as CustomCategory[]); //Now subcategories are the parent categories. Parentcategories refers to visible area of sidebar.
+      setParentCategories(category.subcategories as CategoriesGetManyOutput); //Now subcategories are the parent categories. Parentcategories refers to visible area of sidebar.
       setSelectedCategory(category);
     } else {
       // If user has clicked on a sub category

@@ -5,12 +5,13 @@ import { useState } from "react";
 import { useRef } from "react";
 import { SubcategoryMenu } from "./subcategory-menu";
 import { useDropdownPosition } from "./use-dropdown-position";
-import { CustomCategory } from "../types";
+// import { CustomCategory } from "../types";
 import Link from "next/link";
+import { CategoriesGetManyOutput } from "@/modules/categories/types";
 
 interface Props {
-  category: CustomCategory; // Using CustomCategory type to include subcategories
-  // 'CustomCategory' is a type that extends 'Category' and includes an optional 'subcategories' property.
+  category: CategoriesGetManyOutput[1];
+  //category: CustomCategory; Using CustomCategory type to include subcategories 'CustomCategory' is a type that extends 'Category' and includes an optional 'subcategories' property.
   isActive: boolean;
   isNavigationHovered: boolean;
 }

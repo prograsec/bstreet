@@ -1,15 +1,16 @@
 "use client";
 
 import { CategoryDropdown } from "./category-dropdown";
-import { CustomCategory } from "../types";
+// import { CustomCategory } from "../types";
 import { cn } from "@/lib/utils";
 import { ListFilterIcon } from "lucide-react";
 import { useState, useEffect, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { CategoriesSidebar } from "./categories-sidebar";
+import { CategoriesGetManyOutput } from "@/modules/categories/types";
 
 interface CategoriesProps {
-  data: CustomCategory[];
+  data: CategoriesGetManyOutput;
 }
 
 export const Categories = ({ data }: CategoriesProps) => {
@@ -86,7 +87,7 @@ export const Categories = ({ data }: CategoriesProps) => {
       <CategoriesSidebar
         open={isSidebarOpen}
         onOpenChange={setIsSidebarOpen}
-        data={data}
+        // data={data}
       />
       {/* It takes two props: open and onOpenChange. open is a boolean that determines if the sidebar is open or not, and onOpenChange is a function that will be called when the sidebar is opened or closed */}
 
