@@ -11,6 +11,7 @@ import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { useMutation } from "@tanstack/react-query";
 import { useTRPC } from "@/trpc/client";
+import { toast } from "sonner";
 
 import {
   Form,
@@ -28,8 +29,10 @@ const poppins = Poppins({
 });
 
 import { registerSchema } from "@/modules/auth/schemas";
+import { useRouter } from "next/navigation";
 
 export const SignUpView = () => {
+  const router = useRouter();
   const form = useForm<z.infer<typeof registerSchema>>({
     resolver: zodResolver(registerSchema),
     defaultValues: {
@@ -40,7 +43,7 @@ export const SignUpView = () => {
   });
 
   const onSubmit = (values: z.infer<typeof registerSchema>) => {
-    register.mutate(values);
+    register.mutate(values); // mutate function is used to call the mutation function. here mutation function is the register function.
   };
 
   const username = form.watch("username");
@@ -49,7 +52,16 @@ export const SignUpView = () => {
   const showPreview = username && !usernameErrors; //this is used to show the preview of the username. if the username is not empty and there are no errors, then show the preview.
 
   const trpc = useTRPC();
-  const register = useMutation(trpc.auth.register.mutationOptions());
+  const register = useMutation(
+    trpc.auth.register.mutationOptions({
+      onError: (error) => {
+        toast.error(error.message);
+      },
+      onSuccess: () => {
+        router.push("/");
+      },
+    })
+  );
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-5">

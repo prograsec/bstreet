@@ -15,9 +15,30 @@ export const authRouter = createTRPCRouter({
     const cookies = await getCookies();
     cookies.delete(AUTH_COOKIE);
   }),
-  register: baseProcedure.input(//registerSchema is the schema for the register procedure or the object that is passed to the procedure for validation
+  register: baseProcedure.input(//registerSchema is the schema for the register procedure or the zod object that is passed to the procedure for validation
     registerSchema 
   ).mutation(async ({ctx, input}) => {
+    const existingData = await ctx.db.find({
+        collection: "users",
+        limit: 1,
+        where:{
+            username:{
+                equals: input.username,
+            }
+        },
+        select:{
+            username: true,
+        }
+    })
+
+    const existingUser = existingData.docs[0];
+
+    if(existingUser){
+        throw new TRPCError({
+            code: "BAD_REQUEST",
+            message: "Username already exists",
+        })
+    }
     
     await ctx.db.create({
         collection: "users",
