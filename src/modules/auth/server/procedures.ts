@@ -1,9 +1,9 @@
 import { headers as getHeaders, cookies as getCookies } from "next/headers"; //headers is used to get the headers of the request. Http headers provides information about the meta data of api requests and its response.
 import { baseProcedure, createTRPCRouter } from "@/trpc/init";
-import { z } from "zod";
 import { TRPCError } from "@trpc/server";
 import { AUTH_COOKIE } from "../constants";
-import { registerSchema } from "../schemas";
+import { registerSchema, loginSchema } from "../schemas";
+
 
 export const authRouter = createTRPCRouter({
   session: baseProcedure.query(async ({ ctx }) => {
@@ -75,11 +75,7 @@ export const authRouter = createTRPCRouter({
     
   }),
   login: baseProcedure.input(
-    z.object({
-        email: z.string().email(),
-        password: z.string(),
-        
-      })
+    loginSchema
   ).mutation(async ({ctx, input}) => {
     const data = await ctx.db.login({
         collection: "users",
