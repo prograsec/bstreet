@@ -3,6 +3,7 @@ import { baseProcedure, createTRPCRouter } from "@/trpc/init";
 import { z } from "zod";
 import { TRPCError } from "@trpc/server";
 import { AUTH_COOKIE } from "../constants";
+import { registerSchema } from "../schemas";
 
 export const authRouter = createTRPCRouter({
   session: baseProcedure.query(async ({ ctx }) => {
@@ -14,19 +15,8 @@ export const authRouter = createTRPCRouter({
     const cookies = await getCookies();
     cookies.delete(AUTH_COOKIE);
   }),
-  register: baseProcedure.input(
-    z.object({
-        email: z.string().email(),
-        password: z.string().min(3),
-        username: z
-          .string()
-          .min(3, "Username must be at least 3 characters")
-          .max(63, "Username must be less than 63 characters")
-          .regex(
-            /^[a-z0-9][a-z0-9-]*[a-z0-9]$/,
-            "Username can only contain lowercase letters, numbers and hyphens. It must start and end with a letter or number"
-          ).refine((val)=>val.toLowerCase()),
-      })
+  register: baseProcedure.input(//registerSchema is the schema for the register procedure or the object that is passed to the procedure for validation
+    registerSchema 
   ).mutation(async ({ctx, input}) => {
     
     await ctx.db.create({
