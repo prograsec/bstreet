@@ -9,6 +9,8 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
+import { useMutation } from "@tanstack/react-query";
+import { useTRPC } from "@/trpc/client";
 
 import {
   Form,
@@ -38,13 +40,16 @@ export const SignUpView = () => {
   });
 
   const onSubmit = (values: z.infer<typeof registerSchema>) => {
-    console.log(values);
+    register.mutate(values);
   };
 
   const username = form.watch("username");
   const usernameErrors = form.formState.errors.username;
 
   const showPreview = username && !usernameErrors; //this is used to show the preview of the username. if the username is not empty and there are no errors, then show the preview.
+
+  const trpc = useTRPC();
+  const register = useMutation(trpc.auth.register.mutationOptions());
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-5">
@@ -123,6 +128,7 @@ export const SignUpView = () => {
             />
 
             <Button
+              disabled={register.isPending}
               type="submit"
               variant="elevated"
               className="bg-black text-white hover:bg-pink-400 hover:text-primary"
