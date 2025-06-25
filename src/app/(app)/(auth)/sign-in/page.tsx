@@ -1,5 +1,7 @@
+import { SignInView } from "@/modules/auth/ui/views/sign-in-view";
+
 const Page = () => {
-  return <div>Sign In Page</div>;
+  return <SignInView />;
 };
 
 export default Page;
