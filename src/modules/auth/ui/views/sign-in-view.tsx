@@ -10,7 +10,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { useMutation } from "@tanstack/react-query";
-// import { useTRPC } from "@/trpc/client";
+import { useTRPC } from "@/trpc/client";
 import { toast } from "sonner";
 
 import {
@@ -44,41 +44,18 @@ export const SignInView = () => {
     login.mutate(values);
   };
 
-  //   const trpc = useTRPC();
-  //   const login = useMutation(
-  //     trpc.auth.login.mutationOptions({
-  //       onError: (error) => {
-  //         toast.error(error.message);
-  //       },
-  //       onSuccess: () => {
-  //         router.push("/");
-  //       },
-  //     })
-  //   );
-
-  //Standard way of calling the mutation function / api call without using trpc
-  const login = useMutation({
-    mutationFn: async (values: z.infer<typeof loginSchema>) => {
-      const response = await fetch("/api/users/login", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(values),
-      });
-
-      if (!response.ok) {
-        const error = await response.json();
-        throw new Error(error.message || "Failed to login");
-      }
-    },
-    onError: (error) => {
-      toast.error(error.message);
-    },
-    onSuccess: () => {
-      router.push("/");
-    },
-  });
+  //Back to TRPC
+  const trpc = useTRPC();
+  const login = useMutation(
+    trpc.auth.login.mutationOptions({
+      onError: (error) => {
+        toast.error(error.message);
+      },
+      onSuccess: () => {
+        router.push("/");
+      },
+    })
+  );
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-5">
