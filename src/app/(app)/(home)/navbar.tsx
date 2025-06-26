@@ -72,7 +72,7 @@ export const Navbar = () => {
         ))}
       </div>
 
-      {/* If user is logged in, show the start selling button */}
+      {/* If user is logged in, don't show the start selling button */}
       {session.data?.user ? (
         <div className="hidden lg:flex">
           <Button
