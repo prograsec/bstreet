@@ -1,7 +1,7 @@
-import { headers as getHeaders, cookies as getCookies } from "next/headers"; //headers is used to get the headers of the request. Http headers provides information about the meta data of api requests and its response.
+import { headers as getHeaders } from "next/headers"; //headers is used to get the headers of the request. Http headers provides information about the meta data of api requests and its response.
 import { baseProcedure, createTRPCRouter } from "@/trpc/init";
 import { TRPCError } from "@trpc/server";
-import { AUTH_COOKIE } from "../constants";
+import { generateAuthCookie } from "../utils";
 import { registerSchema, loginSchema } from "../schemas";
 
 
@@ -11,10 +11,8 @@ export const authRouter = createTRPCRouter({
     const session = await ctx.db.auth({ headers }); //Take the headers and return user information
     return session;
   }),
-  logout: baseProcedure.mutation(async () => {
-    const cookies = await getCookies();
-    cookies.delete(AUTH_COOKIE);
-  }),
+  
+  //We don't require logout for now
   register: baseProcedure.input(//registerSchema is the schema for the register procedure or the zod object that is passed to the procedure for validation
     registerSchema 
   ).mutation(async ({ctx, input}) => {
@@ -65,12 +63,9 @@ export const authRouter = createTRPCRouter({
         })
     }
 
-    const cookies = await getCookies();
-    cookies.set("session", data.token, {
-        name:AUTH_COOKIE,
+    await generateAuthCookie({
+        prefix: ctx.db.config.cookiePrefix,
         value: data.token,
-        httpOnly: true,
-        path: "/",
     });
     
   }),
@@ -92,12 +87,9 @@ export const authRouter = createTRPCRouter({
         })
     }
 
-    const cookies = await getCookies();
-    cookies.set("session", data.token, {
-        name:AUTH_COOKIE,
+    await generateAuthCookie({
+        prefix: ctx.db.config.cookiePrefix,
         value: data.token,
-        httpOnly: true,
-        path: "/",
     });
 
     return data;

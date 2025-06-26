@@ -9,9 +9,10 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useTRPC } from "@/trpc/client";
 import { toast } from "sonner";
+import { useRouter } from "next/navigation";
 
 import {
   Form,
@@ -29,7 +30,7 @@ const poppins = Poppins({
 });
 
 import { registerSchema } from "@/modules/auth/schemas";
-import { useRouter } from "next/navigation";
+// import { useRouter } from "next/navigation";
 
 export const SignUpView = () => {
   const router = useRouter();
@@ -52,12 +53,14 @@ export const SignUpView = () => {
   const showPreview = username && !usernameErrors; //this is used to show the preview of the username. if the username is not empty and there are no errors, then show the preview.
 
   const trpc = useTRPC();
+  const queryClient = useQueryClient();
   const register = useMutation(
     trpc.auth.register.mutationOptions({
       onError: (error) => {
         toast.error(error.message);
       },
-      onSuccess: () => {
+      onSuccess: async () => {
+        await queryClient.invalidateQueries(trpc.auth.session.queryFilter()); //invalidate the session query to get the latest session data which rerender the page
         router.push("/");
       },
     })
