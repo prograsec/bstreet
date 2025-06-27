@@ -6,6 +6,7 @@ import { useTRPC } from "@/trpc/client";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { useParams } from "next/navigation";
 import { DEFAULT_BG_COLOR } from "@/modules/home/constants";
+import { BreadcrumbNavigation } from "./breadcrumb-navigation";
 
 export const SearchFilters = () => {
   const trpc = useTRPC();
