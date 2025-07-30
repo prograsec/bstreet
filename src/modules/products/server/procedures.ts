@@ -1,19 +1,46 @@
+import { z } from "zod";
 import { baseProcedure, createTRPCRouter } from "@/trpc/init";
+import { Where } from "payload"
 
 export const productsRouter = createTRPCRouter({
-    getMany: baseProcedure.query(async ({ctx}) => {
-    //getMany is the name of the function that will be called from the client
-        const data = await ctx.db.find({
-            collection: "products",
-            depth: 1,
-          });
+  getMany: baseProcedure.input(
+    z.object({
+      category: z.string().nullable().optional(),
+    }),
+  )
+  .query(async ({ctx, input}) => {
+    const where:Where ={}
 
-        //Artificial dealy for testing
-        await new Promise((resolve) => setTimeout(resolve, 2000));
+    //Its trying to fetch the category from collections before giving where clause in .query() to check whether the category exists or not.
+    if(input.category) {
+      const categoryData = await ctx.db.find({
+        collection: "categories",
+        limit: 1,
+        pagination: false,
+        where:{
+          slug:{
+            equals: input.category
+          }
+        }
+      })
 
-        return data;
-    })
-})
+      const category = categoryData.docs[0];
+      if(category){
+        where["category.slug"] = {
+          equals: category.slug  //Now here assigning the slug of the category to the where clause
+        }
+      }
+    }
+
+      const data = await ctx.db.find({
+        collection: "products",
+        depth: 1,
+        where
+      });
+
+      return data;
+  }),
+});
 
 //procedures.ts is where you define the functions that will be called from the client
 //It is a server only file, so it cannot be imported into the client 
@@ -21,7 +48,8 @@ export const productsRouter = createTRPCRouter({
 
 /* What does src/modules/categories/server/procedures.ts do?
 It declares all server-side “procedures” (endpoints) that relate to the Categories domain.
-Those procedures are collected into a tRPC router (categoriesRouter) so the rest of your app—or the browser via the tRPC client—can call them in a type-safe way.
+Those procedures are collected into a tRPC router (categoriesRouter) so the rest
+of your app—or the browser via the tRPC client—can call them in a type-safe way.
 Because it sits inside server/, everything exported here runs only on the server; the client consumes it indirectly via the generated tRPC hooks.
 
 What is categoriesRouter?

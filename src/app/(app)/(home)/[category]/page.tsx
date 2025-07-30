@@ -14,14 +14,17 @@ interface Props {
   }>;
 }
 
-const Page = async ({}: Props) => {
+const Page = async ({ params }: Props) => {
+  const { category } = await params;
   const queryClient = getQueryClient();
-  void queryClient.prefetchQuery(trpc.products.getMany.queryOptions());
+  void queryClient.prefetchQuery(
+    trpc.products.getMany.queryOptions({ category })
+  );
 
   return (
     <HydrationBoundary state={dehydrate(queryClient)}>
       <Suspense fallback={<ProductSkeleton />}>
-        <ProductList />
+        <ProductList category={category} />
       </Suspense>
     </HydrationBoundary>
   );
@@ -32,4 +35,28 @@ export default Page;
 //<HydrationBoundary> is a component that is used to hydrate the client side of the application.
 // Props are passed so that the client side of the application can use the same props as the server side of the application.
 //Hydrate means to convert the server side of the application to the client side of the application.
-//<Suspense> is a component that is used to show a fallback component while the data is loading.
+
+//Difference between useSuspenseQuery and useQuery
+/*useQuery (standard way)
+You manually handle loading and error states.
+
+Works without enabling React Suspense.
+
+Good for traditional React apps.
+
+
+
+useSuspenseQuery (used with React Suspense)
+Doesn't return isLoading or error.
+
+Instead, automatically throws a Promise while loading, which is caught by a <Suspense> boundary.
+
+You must use it inside a <Suspense> component.
+
+Useful when you want to keep your UI cleaner and rely on React to handle the loading state.
+
+
+***If you use useSuspenseQuery without wrapping it inside <Suspense>, your app will break.
+***Error handling with useSuspenseQuery requires an Error Boundary.
+
+*/
