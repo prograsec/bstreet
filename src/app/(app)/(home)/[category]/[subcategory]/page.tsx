@@ -1,18 +1,30 @@
+import { getQueryClient, trpc } from "@/trpc/server";
+import {
+  ProductList,
+  ProductSkeleton,
+} from "@/modules/products/ui/components/product-list";
+import { dehydrate, HydrationBoundary } from "@tanstack/react-query";
+import { Suspense } from "react";
+
 interface Props {
   params: Promise<{
-    //Because it is a dynamic route, the params are not resolved until the page is rendered.
-    //It is a server component, so we need to use async await to get the params.
-    category: string;
     subcategory: string;
   }>;
 }
 
 const Page = async ({ params }: Props) => {
-  const { category, subcategory } = await params;
+  const { subcategory } = await params;
+  const queryClient = getQueryClient();
+  void queryClient.prefetchQuery(
+    trpc.products.getMany.queryOptions({ category: subcategory })
+  );
+
   return (
-    <div>
-      Category: {category} Subcategory: {subcategory}
-    </div>
+    <HydrationBoundary state={dehydrate(queryClient)}>
+      <Suspense fallback={<ProductSkeleton />}>
+        <ProductList category={subcategory} />
+      </Suspense>
+    </HydrationBoundary>
   );
 };
 

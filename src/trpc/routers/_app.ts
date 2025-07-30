@@ -2,8 +2,10 @@
 import { createTRPCRouter } from '../init';
 import { categoriesRouter } from '@/modules/categories/server/procedures';
 import { authRouter } from '@/modules/auth/server/procedures';
+import { productsRouter } from '@/modules/products/server/procedures';
 
 export const appRouter = createTRPCRouter({
+ products: productsRouter,
  auth: authRouter,
  categories: categoriesRouter, // Here categories is the name of the router and categoriesRouter is the router that will be used to call the functions
 });
