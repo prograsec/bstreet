@@ -1,6 +1,7 @@
 import { z } from "zod";
 import { baseProcedure, createTRPCRouter } from "@/trpc/init";
 import { Where } from "payload"
+import { Category } from "@/payload-types";
 
 export const productsRouter = createTRPCRouter({
   getMany: baseProcedure.input(
@@ -16,6 +17,7 @@ export const productsRouter = createTRPCRouter({
       const categoryData = await ctx.db.find({
         collection: "categories",
         limit: 1,
+        depth: 1,
         pagination: false,
         where:{
           slug:{
@@ -24,10 +26,26 @@ export const productsRouter = createTRPCRouter({
         }
       })
 
-      const category = categoryData.docs[0];
-      if(category){
+      const formattedData = categoryData.docs.map((doc) => ({
+                  ...doc,
+                  subcategories: (doc.subcategories?.docs ?? []).map((doc) => ({
+                    ...(doc as Category),
+                    subcategories: undefined,
+                  })),
+                }));
+
+      const subcategories = [];
+      const parentCategory = formattedData[0];
+
+      if(parentCategory){
+        subcategories.push(...parentCategory.subcategories.map((subcategory)=> subcategory.slug));
+      }
+
+      console.log("Subcategories:", subcategories);
+
+      if(parentCategory){
         where["category.slug"] = {
-          equals: category.slug  //Now here assigning the slug of the category to the where clause
+          in: [parentCategory.slug, ...subcategories]
         }
       }
     }
@@ -42,6 +60,37 @@ export const productsRouter = createTRPCRouter({
   }),
 });
 
+/*
+[                     formattedData
+    {
+        "createdAt": "2025-06-13T15:17:40.178Z",
+        "updatedAt": "2025-06-13T15:17:40.178Z",
+        "name": "Drawing & Painting",
+        "slug": "drawing-painting",
+        "color": "#FFCAB0",
+        "parent": null,
+        "subcategories": [
+            {
+                "createdAt": "2025-06-13T15:17:42.666Z",
+                "updatedAt": "2025-06-13T15:17:42.666Z",
+                "name": "Charcoal",
+                "slug": "charcoal",
+                "parent": "684c41145f917759161ea40a",
+                "id": "684c41165f917759161ea418"
+            },
+            {
+                "createdAt": "2025-06-13T15:17:42.138Z",
+                "updatedAt": "2025-06-13T15:17:42.138Z",
+                "name": "Pastel",
+                "slug": "pastel",
+                "parent": "684c41145f917759161ea40a",
+                "id": "684c41165f917759161ea415"
+            },
+        ],
+        "id": "684c41145f917759161ea40a"
+    }
+]
+*/
 //procedures.ts is where you define the functions that will be called from the client
 //It is a server only file, so it cannot be imported into the client 
 
